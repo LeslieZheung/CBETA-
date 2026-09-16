@@ -276,9 +276,8 @@
 </div>
 
 <footer>
-  目錄與經號取自 <a href="https://cbetaonline.dila.edu.tw/" target="_blank" rel="noopener">CBETA 中華電子佛典協會</a>（CC BY-NC-SA）
-  · 導讀文字取自 <a href="https://rushiwowen.co/" target="_blank" rel="noopener">如是我聞</a>，為 AI 生成內容，僅供學習參考<br>
-  個人研習用途，不作商業使用
+  目錄與經號取自 <a href="https://cbetaonline.dila.edu.tw/" target="_blank" rel="noopener">CBETA 中華電子佛典協會</a>（CC BY-NC-SA）<br>
+  導讀自佛光大藏經／星雲大師全集，為 AI 生成內容
 </footer>
 <div class="toast" id="toast"></div>
 
@@ -394,7 +393,6 @@ function detailHtml(x) {
         <div>${x.juan ? esc(x.juan) + ' 卷' : ''}${x.category ? ' · ' + esc(x.category) : ''}</div>
       </div>
       <div class="body">${esc(intro)}</div>
-      <div class="src">導讀取自 <a href="${esc(x.rw_url || 'https://rushiwowen.co/')}" target="_blank" rel="noopener">如是我聞</a>，AI 生成內容，已轉為正體，僅供參考。</div>
     </div>` : `
     <div class="paper empty">
       <div class="meta">${x.creator ? esc(x.creator) : ''}${x.juan ? ' · ' + esc(x.juan) + ' 卷' : ''}${x.category ? ' · ' + esc(x.category) : ''}</div>
@@ -402,10 +400,6 @@ function detailHtml(x) {
     </div>`}
     <div class="actions">
       <a class="pill primary sm" href="${esc(cbeta)}" target="_blank" rel="noopener">在 CBETA 讀經文</a>
-      ${x.rw_url ? `<a class="pill sm" href="${esc(x.rw_url)}" target="_blank" rel="noopener">如是我聞原頁</a>` : ''}
-      <button class="pill sm" data-copy="${esc(x.title)}" data-go="https://etext.fgs.org.tw/">複製經名 · 佛光大藏經</button>
-      <button class="pill sm" data-copy="${esc(x.title)}" data-go="https://books.masterhsingyun.org/search.html">複製經名 · 星雲大師全集</button>
-      <button class="pill sm" data-copy="${esc(x.work)}">複製經號</button>
     </div>
     ${x.note ? `<div class="paper note"><h3>我的註釋</h3><div class="body">${esc(x.note)}</div></div>` : ''}
   `;
@@ -421,9 +415,7 @@ function mobilebarHtml(x) {
   };
   return `
     <a href="#">${I.back}<span>藏經</span></a>
-    <a class="main" href="${esc(cbeta)}" target="_blank" rel="noopener">${I.read}<span>CBETA</span></a>
-    ${x.rw_url ? `<a href="${esc(x.rw_url)}" target="_blank" rel="noopener">${I.rw}<span>如是我聞</span></a>` : ''}
-    <button data-copy="${esc(x.title)}">${I.copy}<span>複製經名</span></button>
+    <a class="main" href="${esc(cbeta)}" target="_blank" rel="noopener">${I.read}<span>在 CBETA 讀經文</span></a>
   `;
 }
 
