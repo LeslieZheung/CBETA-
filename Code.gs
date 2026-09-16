@@ -264,7 +264,15 @@ function step4_enrichCbeta() {
       headers: { Referer: CFG.REFERER },
       muteHttpExceptions: true,
     }));
-    const resps = UrlFetchApp.fetchAll(reqs);
+    let resps;
+    try { resps = UrlFetchApp.fetchAll(reqs); }
+    catch (err) {
+      // CBETA API 暫時連不上：記住進度，1 分鐘後續跑
+      props.setProperty('ENRICH_ROW', String(batch[0].row));
+      scheduleContinue_('step4_enrichCbeta');
+      log_('步驤4', `連線失敗（${err.message}），1 分鐘後續跑，進度 ${batch[0].row - 2}/${n}`);
+      return;
+    }
     resps.forEach((res, k) => {
       const b = batch[k];
       if (res.getResponseCode() !== 200) return;

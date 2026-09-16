@@ -92,6 +92,31 @@
   .hint { text-align: center; color: var(--muted-2); font-size: 13px; margin: -8px 0 18px; }
   .hint kbd { font-family: var(--sans); background: var(--chip); padding: 0 6px; border-radius: 5px; border: 1px solid var(--line); }
 
+  /* ---------- 部類選單（仿 CBETA 依據部類） */
+  .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px 16px; margin-bottom: 8px; }
+  .cat { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+         cursor: pointer; text-decoration: none; color: var(--ink); box-shadow: var(--shadow);
+         transition: transform .18s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease; }
+  .cat:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--primary) 45%, transparent); background: var(--primary-soft); }
+  .cat.active { border-color: var(--primary); background: var(--primary-soft); }
+  .cat .folder { flex: 0 0 auto; color: var(--primary); display: grid; place-items: center; transition: transform .18s ease; }
+  .cat:hover .folder { transform: translateY(-2px); }
+  .cat .no { font-family: var(--sans); font-size: 12px; color: var(--primary); letter-spacing: .08em; width: 22px; }
+  .cat .nm { font-family: var(--serif); font-size: 17px; font-weight: 600; letter-spacing: .04em; flex: 1; transition: color .18s ease; }
+  .cat:hover .nm { color: var(--primary); }
+  .cat .ct { font-size: 12.5px; color: var(--muted); background: var(--chip); border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+  .cat.dim { opacity: .55; }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-top: 26px; font-size: 14px; color: var(--muted); }
+  .crumbs a { color: var(--primary); text-decoration: none; transition: color .18s ease; }
+  .crumbs a:hover { color: var(--primary-2); }
+  .crumbs .sep { color: var(--muted-2); }
+  .folder-title { font-family: var(--serif); font-size: 26px; font-weight: 600; margin: 8px 0 20px; letter-spacing: .04em; }
+  #viewFolder .back { margin: 14px 0 0; }
+  #viewFolder .cats { margin-bottom: 22px; }
+  .results-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 6px 0 16px; }
+  .results-head h3 { font-family: var(--serif); font-size: 20px; font-weight: 600; margin: 0; letter-spacing: .04em; }
+  .results-head h3 small { color: var(--muted-2); font-size: 13px; font-family: var(--sans); margin-left: 8px; letter-spacing: 0; }
+
   /* ---------- 清單卡片 */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 16px; box-shadow: var(--shadow);
@@ -173,6 +198,9 @@
     .search-box { flex: 1 1 100%; }
     .search select { flex: 1 1 0; min-width: 0; padding: 10px 30px 10px 12px; font-size: 13.5px; }
     .hint { display: none; }
+    .cats { grid-template-columns: 1fr; gap: 8px; }
+    .cat { padding: 11px 14px; }
+    .cat .nm { font-size: 16px; }
     .grid { grid-template-columns: 1fr; gap: 12px; }
     .card { padding: 16px 16px 14px; }
     .card .title { font-size: 18px; }
@@ -210,12 +238,6 @@
       <span class="name">大藏經對照</span>
     </a>
     <span class="sp"></span>
-    <button class="icon-btn" id="btnSearch" title="搜尋（/）">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    </button>
-    <button class="icon-btn" id="btnRandom" title="隨機一經">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
-    </button>
     <button class="icon-btn" id="btnSetup" title="設定">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
     </button>
@@ -229,8 +251,8 @@
     <div class="seed"><img src="data:image/png;base64,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" alt="梵字種子字" width="281" height="287" draggable="false"></div>    <h1>大藏經對照</h1>
     <p>CBETA 經號為鑰，一部經一段導讀。<br>在 CBETA 讀原文，在這裡看這部經在說什麼。</p>
     <div class="cta">
-      <a class="pill primary" href="#list" id="ctaAll">所有藏經</a>
-      <button class="pill" id="ctaRandom">隨機一經</button>
+      <a class="pill primary" href="#cats" id="ctaCats">依據部類</a>
+      <button class="pill" id="ctaSearch">搜尋經典</button>
     </div>
   </section>
 
@@ -246,26 +268,42 @@
   </div>
 
   <main class="wrap" id="list">
-    <div class="section-title">
-      <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3V5Z"/><path d="M8 9h6M8 13h6M20 8v10"/></svg></span>
-      <h2>所有藏經</h2>
+    <div class="section-title" id="cats">
+      <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+      <h2>依據部類</h2>
       <small id="count"></small>
+    </div>
+    <div class="cats" id="catgrid"><div class="loading" style="grid-column:1/-1">載入中…</div></div>
+
+    <div class="section-title" id="searchTitle">
+      <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+      <h2>經目查詢</h2>
     </div>
     <div class="search">
       <div class="search-box">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input type="search" id="q" placeholder="搜尋經號、經名、譯者、部類…" autocomplete="off">
+        <input type="search" id="q" placeholder="搜尋經號、經名、譯者…" autocomplete="off">
       </div>
-      <select id="canon"><option value="">全部藏經</option></select>
-      <select id="only">
-        <option value="">全部</option>
-        <option value="intro">有導讀</option>
-        <option value="note">有我的註釋</option>
-        <option value="none">尚無導讀</option>
-      </select>
     </div>
-    <p class="hint">在 CBETA 看到經號後，於本站網址後加 <kbd>#T0915</kbd> 可直接開啟該經。</p>
-    <div class="grid" id="grid"><div class="loading" style="grid-column:1/-1">載入中…</div></div>
+    <p class="hint">選一個部類，或輸入經號、經名開始查詢。在 CBETA 看到經號後，於本站網址後加 <kbd>#T0915</kbd> 可直接開啟該經。</p>
+    <div class="results" id="results" hidden>
+      <div class="results-head">
+        <h3 id="resultsTitle"></h3>
+        <button class="pill sm" id="clearFilter">清除條件</button>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ===== 部類 / 子分類視圖 ===== -->
+<div id="viewFolder" hidden>
+  <main class="wrap">
+    <div class="crumbs" id="crumbs"></div>
+    <a class="back" id="folderBack" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> 回上一層</a>
+    <h2 class="folder-title" id="folderTitle"></h2>
+    <div class="cats" id="subgrid"></div>
+    <div class="grid" id="workgrid"></div>
   </main>
 </div>
 
@@ -277,7 +315,7 @@
 
 <footer>
   目錄與經號取自 <a href="https://cbetaonline.dila.edu.tw/" target="_blank" rel="noopener">CBETA 中華電子佛典協會</a>（CC BY-NC-SA）<br>
-  導讀自佛光大藏經／星雲大師全集，為 AI 生成內容
+  導讀自佛光大藏經／星雲大師全集／佛學術語字辭典，為 AI 生成內容
 </footer>
 <div class="toast" id="toast"></div>
 
@@ -285,19 +323,22 @@
 <script>
 // ===== 設定：把 GAS 部署後的 /exec 網址貼在這裡（或用右上角「設定」）=====
 const DEFAULT_API = 'https://script.google.com/macros/s/AKfycbyhNHWU4Zs2_cGEqQ637-3QHkpv0BbRghWAhcVC-Lp7qIw8UL3JRVQd3aULmdg_qPw/exec';
+const CATALOG_URL = 'catalog.json';   // CBETA「依據部類」樹，與 index.html 同目錄
 const CACHE_KEY = 'sutra_index_cache_v2';
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const PAGE_SIZE = 60;
 
-const CANON_NAMES = { T:'大正藏', X:'卍續藏', J:'嘉興藏', JA:'嘉興藏', JB:'嘉興藏', B:'大藏經補編', ZW:'藏外佛教文獻', ZWa:'藏外佛教文獻', I:'北朝佛教石刻拓片', G:'佛教大藏經', GA:'中華大藏經', GB:'中華大藏經', D:'國圖善本佛典', Y:'印順法師著作', N:'南傳大藏經', Ba:'大藏經補編', YP:'永樂北藏', F:'房山石經', L:'乾隆藏', TX:'太虛大師全書', P:'永樂北藏', C:'中華藏', K:'高麗藏', A:'趙城金藏', LC:'呂澂佛學著作', CC:'中國佛寺志', S:'宋藏遺珍', U:'洪武南藏', M:'卍正藏' };
+const CANON_NAMES = { T:'大正藏', X:'卍續藏', J:'嘉興藏', JA:'嘉興藏', JB:'嘉興藏', B:'大藏經補編', ZW:'藏外佛教文獻', ZWa:'藏外佛教文獻', I:'北朝佛教石刻拓片', G:'佛教大藏經', GA:'中華大藏經', GB:'中華大藏經', D:'國圖善本佛典', Y:'印順法師著作', N:'南傳大藏經', Ba:'大藏經補編', YP:'永樂北藏', F:'房山石經', L:'乾隆藏', TX:'太虛大師全書', P:'永樂北藏', C:'中華藏', K:'高麗藏', A:'趙城金藏', LC:'呂澂佛學著作', CC:'中國佛寺志', S:'宋藏遺珍', U:'洪武南藏', M:'卍正藏', ZS:'正史佛教資料類編' };
 
-let ALL = [], VIEW = [], shown = 0, current = null, cn2t = null;
+let ALL = [], BY_WORK = {}, VIEW = [], shown = 0, current = null, cn2t = null;
+let CATALOG = null, NODES = {}, PARENT = {};
 try { cn2t = OpenCC.Converter({ from: 'cn', to: 'tw' }); } catch (e) {}
 const toTrad = s => (cn2t && s) ? cn2t(s) : (s || '');
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const hasIntro = x => !!(x.desc_s || x.desc_t);
 const ICON_BOOK = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 4.6l3.8 1-3.6 14.4-3.8-1z"/></svg>';
+const ICON_FOLDER = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
 
 function apiUrl() { let u = ''; try { u = localStorage.getItem('sutra_api_url') || ''; } catch (e) {} return u || DEFAULT_API; }
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 1800); }
@@ -305,50 +346,108 @@ function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add
 // ---------- 載入
 async function load(force) {
   const url = apiUrl();
-  $('grid').innerHTML = '<div class="loading" style="grid-column:1/-1">載入中…</div>';
-  if (!url) { $('grid').innerHTML = '<div class="loading" style="grid-column:1/-1">尚未設定資料來源，請按右上角「設定」貼上 GAS 網址。</div>'; $('setup').hidden = false; return; }
+  if (!url) { $('catgrid').innerHTML = '<div class="loading" style="grid-column:1/-1">尚未設定資料來源，請按右上角「設定」貼上 GAS 網址。</div>'; $('setup').hidden = false; return; }
+  const jobs = [loadCatalog()];
+  let cached = null;
   if (!force) {
     try { const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-      if (c && c.url === url && Date.now() - c.t < CACHE_TTL_MS && Array.isArray(c.data)) { ALL = c.data; afterLoad(); return; } } catch (e) {}
+      if (c && c.url === url && Date.now() - c.t < CACHE_TTL_MS && Array.isArray(c.data)) cached = c.data; } catch (e) {}
   }
-  try {
-    const r = await fetch(url, { redirect: 'follow' });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const data = await r.json();
-    if (!Array.isArray(data)) throw new Error('回傳不是陣列，請確認網址以 /exec 結尾且部署為「任何人」可存取');
-    ALL = data;
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ url, t: Date.now(), data })); } catch (e) {}
-    afterLoad();
-  } catch (e) {
-    $('grid').innerHTML = `<div class="loading" style="grid-column:1/-1">載入失敗：${esc(e.message)}<br><small>第一次開啟 GAS 網址可能較慢，請重試，或到「設定」確認網址。</small></div>`;
+  if (cached) { ALL = cached; }
+  else {
+    jobs.push((async () => {
+      const r = await fetch(url, { redirect: 'follow' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      if (!Array.isArray(data)) throw new Error('回傳不是陣列，請確認網址以 /exec 結尾且部署為「任何人」可存取');
+      ALL = data;
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ url, t: Date.now(), data })); } catch (e) {}
+    })());
+  }
+  try { await Promise.all(jobs); afterLoad(); }
+  catch (e) {
+    $('catgrid').innerHTML = `<div class="loading" style="grid-column:1/-1">載入失敗：${esc(e.message)}<br><small>第一次開啟 GAS 網址可能較慢，請重試，或到「設定」確認網址。</small></div>`;
     $('setup').hidden = false;
   }
 }
 
+async function loadCatalog() {
+  const r = await fetch(CATALOG_URL, { cache: 'no-cache' });
+  if (!r.ok) throw new Error('catalog.json 載入失敗 HTTP ' + r.status);
+  CATALOG = await r.json();
+  NODES = {}; PARENT = {};
+  (function walk(node, parent) {
+    NODES[node.n] = node; if (parent) PARENT[node.n] = parent.n;
+    (node.items || []).forEach(it => { if (!it.w) walk(it, node); });
+  })(CATALOG, null);
+}
+
 function afterLoad() {
   ALL.sort((a, b) => String(a.work).localeCompare(String(b.work), 'en', { numeric: true }));
-  const canons = {}; ALL.forEach(x => { const c = x.canon || '?'; canons[c] = (canons[c] || 0) + 1; });
-  const sel = $('canon'); sel.innerHTML = '<option value="">全部藏經</option>';
-  Object.keys(canons).sort((a, b) => canons[b] - canons[a]).forEach(c => {
-    const o = document.createElement('option'); o.value = c; o.textContent = `${CANON_NAMES[c] || c}（${c}）${canons[c]}`; sel.appendChild(o);
-  });
+  BY_WORK = {}; ALL.forEach(x => { BY_WORK[String(x.work)] = x; });
   $('count').textContent = `${ALL.length} 部 · ${ALL.filter(hasIntro).length} 部有導讀`;
+  renderCats();
   applyFilter();
   route();
 }
 
-// ---------- 清單
+// ---------- 部類（首頁 23 個）
+function catTileHtml(node) {
+  const m = String(node.label).match(/^(\d+)\s+(\S+)\s*(.*)$/);
+  const no = m ? m[1] : '', nm = m ? m[2] : node.label, rest = m ? m[3] : '';
+  return `<a class="cat" href="#n=${esc(node.n)}" data-n="${esc(node.n)}">
+    <span class="folder">${ICON_FOLDER}</span>
+    ${no ? `<span class="no">${esc(no)}</span>` : ''}
+    <span class="nm">${esc(nm)}${rest ? ` <small style="font-family:var(--sans);font-weight:normal;color:var(--muted-2);font-size:12px">${esc(rest)}</small>` : ''}</span>
+    <span class="ct">${node.count || 0} 部</span>
+  </a>`;
+}
+function renderCats() {
+  if (!CATALOG) return;
+  $('catgrid').innerHTML = (CATALOG.items || []).filter(it => !it.w).map(catTileHtml).join('');
+}
+
+// ---------- 子分類視圖
+function subTileHtml(node) {
+  return `<a class="cat" href="#n=${esc(node.n)}" data-n="${esc(node.n)}">
+    <span class="folder">${ICON_FOLDER}</span>
+    <span class="nm" style="font-size:15.5px">${esc(node.label)}</span>
+    <span class="ct">${node.count || 0} 部</span>
+  </a>`;
+}
+function showFolder(n) {
+  const node = NODES[n];
+  if (!node) { location.hash = ''; return; }
+  // 麵包屑
+  const chain = []; let cur = n;
+  while (cur) { chain.unshift(NODES[cur]); cur = PARENT[cur]; }
+  $('crumbs').innerHTML = chain.map((c, i) => i === chain.length - 1
+      ? `<span>${esc(c.label)}</span>`
+      : `<a href="${c.n === 'CBETA' ? '#cats' : '#n=' + esc(c.n)}">${esc(c.label)}</a><span class="sep">›</span>`).join('');
+  const parent = PARENT[n];
+  $('folderBack').href = (!parent || parent === 'CBETA') ? '#cats' : '#n=' + parent;
+  $('folderTitle').textContent = node.label;
+  const folders = (node.items || []).filter(it => !it.w);
+  const works = (node.items || []).filter(it => it.w);
+  $('subgrid').innerHTML = folders.map(subTileHtml).join('');
+  $('subgrid').hidden = !folders.length;
+  $('workgrid').innerHTML = works.map(it => {
+    const x = BY_WORK[it.w] || { work: it.w, title: it.l, canon: (it.w.match(/^[A-Za-z]+/) || [''])[0] };
+    return cardHtml(x);
+  }).join('') || (folders.length ? '' : '<div class="more">此分類下沒有經典</div>');
+  $('viewList').hidden = true; $('viewDetail').hidden = true; $('viewFolder').hidden = false;
+  document.title = `${node.label} · 大藏經對照`;
+  window.scrollTo(0, 0);
+}
+
+// ---------- 搜尋
 function applyFilter() {
-  const q = $('q').value.trim(), ql = q.toLowerCase(), canon = $('canon').value, only = $('only').value;
-  VIEW = ALL.filter(x => {
-    if (canon && x.canon !== canon) return false;
-    if (only === 'intro' && !hasIntro(x)) return false;
-    if (only === 'none' && hasIntro(x)) return false;
-    if (only === 'note' && !x.note) return false;
-    if (!q) return true;
-    return String(x.work).toLowerCase().includes(ql) || String(x.title).includes(q) || String(x.creator || '').includes(q) || String(x.category || '').includes(q) || String(x.dynasty || '').includes(q);
-  });
-  if (ql) VIEW.sort((a, b) => (String(b.work).toLowerCase() === ql) - (String(a.work).toLowerCase() === ql));
+  const q = $('q').value.trim(), ql = q.toLowerCase();
+  if (!q) { VIEW = []; $('results').hidden = true; $('grid').innerHTML = ''; return; }
+  VIEW = ALL.filter(x => String(x.work).toLowerCase().includes(ql) || String(x.title).includes(q) || String(x.creator || '').includes(q) || String(x.category || '').includes(q) || String(x.dynasty || '').includes(q));
+  VIEW.sort((a, b) => (String(b.work).toLowerCase() === ql) - (String(a.work).toLowerCase() === ql));
+  $('resultsTitle').innerHTML = `「${esc(q)}」<small>${VIEW.length} 部</small>`;
+  $('results').hidden = false;
   shown = 0; $('grid').innerHTML = ''; renderMore();
 }
 
@@ -357,7 +456,6 @@ function cardHtml(x) {
   if (x.juan) chips.push(`${x.juan} 卷`);
   if (x.dynasty) chips.push(x.dynasty);
   if (x.creator) chips.push(String(x.creator).replace(/^\S+\s+/, ''));
-  if (x.category) chips.push(x.category);
   return `<article class="card" data-work="${esc(x.work)}">
     <div class="head">
       <span class="book ${hasIntro(x) ? 'has' : ''}">${ICON_BOOK}</span>
@@ -377,12 +475,15 @@ function renderMore() {
 }
 
 // ---------- 單經
+let lastFolder = '';
 function detailHtml(x) {
   const intro = x.desc_t || toTrad(x.desc_s);
   const cbeta = x.cbeta_url || ('https://cbetaonline.dila.edu.tw/zh-tw/' + x.work);
   const canon = x.canon ? (CANON_NAMES[x.canon] || x.canon) : '';
+  const backHref = lastFolder ? '#n=' + lastFolder : '#cats';
+  const backText = lastFolder && NODES[lastFolder] ? NODES[lastFolder].label : '依據部類';
   return `
-    <a class="back" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> 所有藏經</a>
+    <a class="back" href="${esc(backHref)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> ${esc(backText)}</a>
     <h1>${esc(x.title)}</h1>
     <div class="code-line">${esc(x.work)}${canon ? ' · ' + esc(canon) : ''}</div>
     ${intro ? `
@@ -408,51 +509,43 @@ function detailHtml(x) {
 function mobilebarHtml(x) {
   const cbeta = x.cbeta_url || ('https://cbetaonline.dila.edu.tw/zh-tw/' + x.work);
   const I = {
-    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>',
     read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>',
-    rw: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
-    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>',
   };
   return `
-    <a href="#">${I.back}<span>藏經</span></a>
+    <a href="${lastFolder ? '#n=' + esc(lastFolder) : '#cats'}">${I.back}<span>回上一層</span></a>
     <a class="main" href="${esc(cbeta)}" target="_blank" rel="noopener">${I.read}<span>在 CBETA 讀經文</span></a>
   `;
 }
 
 function showDetail(work) {
-  const x = ALL.find(y => String(y.work) === String(work));
-  if (!x) { $('reader').innerHTML = `<a class="back" href="#">← 所有藏經</a><div class="paper empty">找不到經號 ${esc(work)}。</div>`; }
+  const x = BY_WORK[String(work)];
+  if (!x) { $('reader').innerHTML = `<a class="back" href="#cats">← 依據部類</a><div class="paper empty">找不到經號 ${esc(work)}。</div>`; $('mobilebar').innerHTML = ''; }
   else { current = x; $('reader').innerHTML = detailHtml(x); $('mobilebar').innerHTML = mobilebarHtml(x); document.title = `${x.work} ${x.title} · 大藏經對照`; }
-  $('viewList').hidden = true; $('viewDetail').hidden = false; window.scrollTo(0, 0);
+  $('viewList').hidden = true; $('viewFolder').hidden = true; $('viewDetail').hidden = false; window.scrollTo(0, 0);
 }
-function showList() {
-  $('viewDetail').hidden = true; $('viewList').hidden = false; document.title = '大藏經對照';
+function showHome() {
+  $('viewDetail').hidden = true; $('viewFolder').hidden = true; $('viewList').hidden = false; document.title = '大藏經對照';
 }
 function route() {
   const h = decodeURIComponent(location.hash.replace(/^#/, '')).trim();
-  if (h && h !== 'list') { if (ALL.length) showDetail(h); }
-  else { showList(); if (h === 'list') $('list').scrollIntoView(); }
+  if (!ALL.length) return;
+  if (h.startsWith('n=')) { lastFolder = h.slice(2); showFolder(lastFolder); return; }
+  if (h && h !== 'cats' && h !== 'list' && h !== 'search') { showDetail(h); return; }
+  showHome();
+  if (h === 'cats') $('cats').scrollIntoView();
+  if (h === 'search' || h === 'list') { $('searchTitle').scrollIntoView(); $('q').focus(); }
 }
-function random() { if (!ALL.length) return; const pool = ALL.filter(hasIntro); const p = pool.length ? pool : ALL; location.hash = p[Math.floor(Math.random() * p.length)].work; }
 
 // ---------- 事件
 $('q').addEventListener('input', applyFilter);
-$('canon').addEventListener('change', applyFilter);
-$('only').addEventListener('change', applyFilter);
 $('q').addEventListener('keydown', e => { if (e.key === 'Enter' && VIEW.length) location.hash = VIEW[0].work; });
-$('grid').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) location.hash = c.dataset.work; });
+$('clearFilter').addEventListener('click', () => { $('q').value = ''; applyFilter(); });
+document.addEventListener('click', e => { const c = e.target.closest('.card'); if (c) { e.preventDefault(); location.hash = c.dataset.work; } });
 window.addEventListener('scroll', () => { if ($('viewList').hidden) return; if (window.innerHeight + window.scrollY > document.body.offsetHeight - 600 && shown < VIEW.length) renderMore(); });
-async function onCopyClick(e) {
-  const b = e.target.closest('button[data-copy]'); if (!b) return;
-  try { await navigator.clipboard.writeText(b.dataset.copy); toast('已複製「' + b.dataset.copy + '」'); } catch (err) { toast('複製失敗，請手動選取'); }
-  if (b.dataset.go) window.open(b.dataset.go, '_blank', 'noopener');
-}
-$('reader').addEventListener('click', onCopyClick);
-$('mobilebar').addEventListener('click', onCopyClick);
 window.addEventListener('hashchange', route);
-document.addEventListener('keydown', e => { if (e.key === '/' && document.activeElement !== $('q')) { e.preventDefault(); location.hash = ''; $('q').focus(); $('q').select(); } });
-$('btnSearch').addEventListener('click', () => { location.hash = ''; setTimeout(() => { $('list').scrollIntoView(); $('q').focus(); }, 50); });
-$('btnRandom').addEventListener('click', random); $('ctaRandom').addEventListener('click', random);
+document.addEventListener('keydown', e => { if (e.key === '/' && document.activeElement !== $('q')) { e.preventDefault(); location.hash = 'search'; } });
+$('ctaSearch').addEventListener('click', () => { location.hash = ''; setTimeout(() => { $('searchTitle').scrollIntoView(); $('q').focus(); }, 50); });
 $('btnSetup').addEventListener('click', () => { location.hash = ''; $('setup').hidden = !$('setup').hidden; $('apiUrl').value = apiUrl(); if (!$('setup').hidden) $('setup').scrollIntoView({ block: 'center' }); });
 $('saveApi').addEventListener('click', () => {
   const u = $('apiUrl').value.trim();
