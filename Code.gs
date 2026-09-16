@@ -299,6 +299,51 @@ function step4_enrichCbeta() {
   toast_('CBETA 譯者/朝代/部類補齊完成');
 }
 
+// ---------------------------------------------------------------- 步驤 4B：從 GitHub 的 CBETA metadata 一次補齊（不靠 CBETA API）
+
+/**
+ * 資料來源：DILA-edu/cbeta-metadata 的 work-info/<藏經>.json（MIT 授權），
+ * 每部經有 byline / dynasty / category。約 24 個檔、一次抓完、一次寫入，數十秒完成。
+ * 會覆寫 C 譯者、D 朝代、E 部類三欄（J 我的註釋不動）。
+ */
+const WORKINFO_BASE = 'https://raw.githubusercontent.com/DILA-edu/Authority-Databases/master/authority_catalog/json/';
+const WORKINFO_CANONS = ['T','X','J','B','ZW','I','G','GA','GB','D','Y','YP','N','F','L','TX','P','C','CC','K','A','LC','M','S','U','ZS'];
+
+function step4b_enrichFromGithub() {
+  const sh = getOrCreateSheet_(CFG.SHEET_MAIN, MAIN_HEADERS);
+  const n = sh.getLastRow() - 1;
+  if (n < 1) throw new Error('「目錄」是空的，請先執行步驤 1');
+
+  // 1. 平行抓 24 個 JSON
+  const reqs = WORKINFO_CANONS.map(c => ({ url: WORKINFO_BASE + c + '.json', muteHttpExceptions: true }));
+  const resps = UrlFetchApp.fetchAll(reqs);
+  const info = {};
+  let files = 0;
+  resps.forEach((res, i) => {
+    if (res.getResponseCode() !== 200) { log_('步驤4B', `${WORKINFO_CANONS[i]}.json HTTP ${res.getResponseCode()}，略過`); return; }
+    try {
+      const obj = JSON.parse(res.getContentText());
+      Object.keys(obj).forEach(k => { info[k] = obj[k]; });
+      files++;
+    } catch (e) { log_('步驤4B', `${WORKINFO_CANONS[i]}.json 解析失敗`); }
+  });
+
+  // 2. 對照經號，整批寫回 C/D/E
+  const works = sh.getRange(2, COL.WORK, n, 1).getValues();
+  const cur = sh.getRange(2, COL.CREATOR, n, 3).getValues();
+  let hit = 0;
+  const out = works.map((r, i) => {
+    const w = String(r[0]).trim();
+    const m = info[w] || info[w.replace(/[a-z]$/, '')]; // 如 T0220a -> T0220
+    if (!m) return cur[i];
+    hit++;
+    return [m.byline || cur[i][0] || '', m.dynasty || cur[i][1] || '', m.category || cur[i][2] || ''];
+  });
+  sh.getRange(2, COL.CREATOR, n, 3).setValues(out);
+  log_('步驤4B', `GitHub metadata 補齊完成：讀到 ${files} 個檔、${Object.keys(info).length} 筆，對到 ${hit}/${n} 部`);
+  toast_(`譯者/朝代/部類補齊：${hit}/${n} 部`);
+}
+
 // ---------------------------------------------------------------- 步驤 5（可選）
 
 /**
