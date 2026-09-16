@@ -154,6 +154,46 @@
   .setup .status, .setup p { color: var(--muted-2); font-size: 13px; margin: 8px 0 0; }
   .loading { text-align: center; color: var(--muted-2); padding: 40px 0; font-family: var(--serif); letter-spacing: .1em; }
 
+  /* ---------- 手機版底部操作列（單經頁） */
+  .mobilebar { display: none; }
+  @media (max-width: 640px) {
+    .nav-in { padding: 8px 14px; }
+    .brand .name { font-size: 18px; }
+    .hero { padding: 44px 20px 28px; }
+    .hero .seed { width: 136px; height: 136px; margin-bottom: 16px; }
+    .hero .seed img { width: 120px; }
+    .hero h1 { font-size: 40px; margin-bottom: 14px; }
+    .hero p { font-size: 15.5px; line-height: 1.95; }
+    .cta { flex-direction: column; align-items: center; gap: 12px; }
+    .cta .pill { width: min(100%, 220px); justify-content: center; padding: 13px 24px; }
+    .section-title { margin: 26px 0 18px; }
+    .section-title h2 { font-size: 24px; }
+    .section-title .ico { width: 38px; height: 38px; }
+    .search { gap: 8px; }
+    .search-box { flex: 1 1 100%; }
+    .search select { flex: 1 1 0; min-width: 0; padding: 10px 30px 10px 12px; font-size: 13.5px; }
+    .hint { display: none; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
+    .card { padding: 16px 16px 14px; }
+    .card .title { font-size: 18px; }
+    .reader { padding: 20px 0 110px; }
+    .reader h1 { font-size: 28px; }
+    .reader .code-line { margin-bottom: 22px; }
+    .paper .body { font-size: 16.5px; line-height: 2; }
+    .actions { display: none; }
+    .mobilebar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; gap: 6px; justify-content: space-around;
+                 padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--bg) 88%, transparent);
+                 backdrop-filter: blur(12px); border-top: 1px solid var(--line); }
+    .mobilebar a, .mobilebar button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 4px;
+                 border: 0; border-radius: 12px; background: transparent; color: var(--muted); font: inherit; font-size: 11px; letter-spacing: .04em; text-decoration: none; cursor: pointer;
+                 transition: transform .18s ease, color .18s ease, background-color .18s ease; }
+    .mobilebar a:hover, .mobilebar button:hover, .mobilebar a:active, .mobilebar button:active { transform: translateY(-2px); color: var(--primary); background: var(--chip); }
+    .mobilebar .main { color: var(--on-primary); background: var(--primary); border-radius: 14px; }
+    .mobilebar .main:hover, .mobilebar .main:active { background: var(--primary-2); color: var(--on-primary); }
+    .mobilebar svg { width: 20px; height: 20px; }
+    footer { padding-bottom: 32px; }
+  }
+
   footer { text-align: center; color: var(--muted-2); font-size: 12.5px; padding: 30px 20px 40px; border-top: 1px solid var(--line); line-height: 2; }
   footer a { color: var(--muted); text-decoration: none; }
   .toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%) translateY(10px);
@@ -232,6 +272,7 @@
 <!-- ===== 單經視圖 ===== -->
 <div id="viewDetail" hidden>
   <div class="wrap"><div class="reader" id="reader"></div></div>
+  <div class="mobilebar" id="mobilebar"></div>
 </div>
 
 <footer>
@@ -370,10 +411,26 @@ function detailHtml(x) {
   `;
 }
 
+function mobilebarHtml(x) {
+  const cbeta = x.cbeta_url || ('https://cbetaonline.dila.edu.tw/zh-tw/' + x.work);
+  const I = {
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',
+    read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>',
+    rw: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>',
+  };
+  return `
+    <a href="#">${I.back}<span>藏經</span></a>
+    <a class="main" href="${esc(cbeta)}" target="_blank" rel="noopener">${I.read}<span>CBETA</span></a>
+    ${x.rw_url ? `<a href="${esc(x.rw_url)}" target="_blank" rel="noopener">${I.rw}<span>如是我聞</span></a>` : ''}
+    <button data-copy="${esc(x.title)}">${I.copy}<span>複製經名</span></button>
+  `;
+}
+
 function showDetail(work) {
   const x = ALL.find(y => String(y.work) === String(work));
   if (!x) { $('reader').innerHTML = `<a class="back" href="#">← 所有藏經</a><div class="paper empty">找不到經號 ${esc(work)}。</div>`; }
-  else { current = x; $('reader').innerHTML = detailHtml(x); document.title = `${x.work} ${x.title} · 大藏經對照`; }
+  else { current = x; $('reader').innerHTML = detailHtml(x); $('mobilebar').innerHTML = mobilebarHtml(x); document.title = `${x.work} ${x.title} · 大藏經對照`; }
   $('viewList').hidden = true; $('viewDetail').hidden = false; window.scrollTo(0, 0);
 }
 function showList() {
@@ -393,11 +450,13 @@ $('only').addEventListener('change', applyFilter);
 $('q').addEventListener('keydown', e => { if (e.key === 'Enter' && VIEW.length) location.hash = VIEW[0].work; });
 $('grid').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) location.hash = c.dataset.work; });
 window.addEventListener('scroll', () => { if ($('viewList').hidden) return; if (window.innerHeight + window.scrollY > document.body.offsetHeight - 600 && shown < VIEW.length) renderMore(); });
-$('reader').addEventListener('click', async e => {
+async function onCopyClick(e) {
   const b = e.target.closest('button[data-copy]'); if (!b) return;
   try { await navigator.clipboard.writeText(b.dataset.copy); toast('已複製「' + b.dataset.copy + '」'); } catch (err) { toast('複製失敗，請手動選取'); }
   if (b.dataset.go) window.open(b.dataset.go, '_blank', 'noopener');
-});
+}
+$('reader').addEventListener('click', onCopyClick);
+$('mobilebar').addEventListener('click', onCopyClick);
 window.addEventListener('hashchange', route);
 document.addEventListener('keydown', e => { if (e.key === '/' && document.activeElement !== $('q')) { e.preventDefault(); location.hash = ''; $('q').focus(); $('q').select(); } });
 $('btnSearch').addEventListener('click', () => { location.hash = ''; setTimeout(() => { $('list').scrollIntoView(); $('q').focus(); }, 50); });
