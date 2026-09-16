@@ -1,6 +1,6 @@
 # 大藏經對照
 
-**網站：https://lesliezheung.github.io/CBETA-/**
+**網站：https://lesliezheung.github.io/Tripitaka/**
 
 以 CBETA 經號為鑰，把每一部經的「導讀」對照到 CBETA 原文。
 首頁依 CBETA「依據部類」23 個部類逐層瀏覽（部類 → 子分類 → 經典），或直接搜尋經號、經名、譯者。

@@ -221,6 +221,19 @@
 
   footer { text-align: center; color: var(--muted-2); font-size: 12.5px; padding: 30px 20px 40px; border-top: 1px solid var(--line); line-height: 2; }
   footer a { color: var(--muted); text-decoration: none; }
+  /* ---------- 回到頁首 */
+  .totop { position: fixed; right: 20px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 14;
+           width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--card); color: var(--primary);
+           display: grid; place-items: center; cursor: pointer; box-shadow: 0 6px 18px -6px rgba(0,0,0,.7);
+           opacity: 0; transform: translateY(8px); pointer-events: none;
+           transition: opacity .2s ease, transform .2s ease, background-color .18s ease, color .18s ease, border-color .18s ease; }
+  .totop.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .totop:hover { transform: translateY(-2px); background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+  @media (max-width: 640px) {
+    .totop { right: 14px; width: 42px; height: 42px; }
+    /* 單經頁手機版有底部操作列，按鈕往上移避免重疊 */
+    #viewDetail:not([hidden]) ~ .totop { bottom: calc(82px + env(safe-area-inset-bottom, 0px)); }
+  }
   .toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%) translateY(10px);
            background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 999px; font-size: 14px; opacity: 0; transition: .2s; pointer-events: none; z-index: 20; }
   .toast.show { opacity: 1; transform: translateX(-50%); }
@@ -249,7 +262,6 @@
     <p>CBETA 經號為鑰，一部經一段導讀。<br>在 CBETA 讀原文，在這裡看這部經在說什麼。</p>
     <div class="cta">
       <a class="pill primary" href="#cats" id="ctaCats">依據部類</a>
-      <button class="pill" id="ctaSearch">搜尋經典</button>
     </div>
   </section>
 
@@ -265,13 +277,6 @@
   </div>
 
   <main class="wrap" id="list">
-    <div class="section-title" id="cats">
-      <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
-      <h2>依據部類</h2>
-      <small id="count"></small>
-    </div>
-    <div class="cats" id="catgrid"><div class="loading" style="grid-column:1/-1">載入中…</div></div>
-
     <div class="section-title" id="searchTitle">
       <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
       <h2>經目查詢</h2>
@@ -282,7 +287,7 @@
         <input type="search" id="q" placeholder="搜尋經號、經名、譯者…" autocomplete="off">
       </div>
     </div>
-    <p class="hint">選一個部類，或輸入經號、經名開始查詢。在 CBETA 看到經號後，於本站網址後加 <kbd>#T0915</kbd> 可直接開啟該經。</p>
+    <p class="hint">輸入經號、經名開始查詢，或往下選一個部類。在 CBETA 看到經號後，於本站網址後加 <kbd>#T0915</kbd> 可直接開啟該經。</p>
     <div class="results" id="results" hidden>
       <div class="results-head">
         <h3 id="resultsTitle"></h3>
@@ -290,6 +295,13 @@
       </div>
       <div class="grid" id="grid"></div>
     </div>
+
+    <div class="section-title" id="cats">
+      <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+      <h2>依據部類</h2>
+      <small id="count"></small>
+    </div>
+    <div class="cats" id="catgrid"><div class="loading" style="grid-column:1/-1">載入中…</div></div>
   </main>
 </div>
 
@@ -309,6 +321,10 @@
   <div class="wrap"><div class="reader" id="reader"></div></div>
   <div class="mobilebar" id="mobilebar"></div>
 </div>
+
+<button class="totop" id="totop" title="回到頁首" aria-label="回到頁首" hidden>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M5 13l7-7 7 7"/></svg>
+</button>
 
 <footer>
   目錄與經號取自 <a href="https://cbetaonline.dila.edu.tw/" target="_blank" rel="noopener">CBETA 中華電子佛典協會</a>（CC BY-NC-SA）<br>
@@ -561,10 +577,15 @@ document.addEventListener('click', e => {
   location.hash = c.dataset.work;
 });
 $('home').addEventListener('click', e => { e.preventDefault(); resetHome(); });
-window.addEventListener('scroll', () => { if ($('viewList').hidden) return; if (window.innerHeight + window.scrollY > document.body.offsetHeight - 600 && shown < VIEW.length) renderMore(); });
+window.addEventListener('scroll', () => {
+  $('totop').hidden = false;
+  $('totop').classList.toggle('show', window.scrollY > 360);
+  if ($('viewList').hidden) return;
+  if (window.innerHeight + window.scrollY > document.body.offsetHeight - 600 && shown < VIEW.length) renderMore();
+}, { passive: true });
+$('totop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 window.addEventListener('hashchange', route);
 document.addEventListener('keydown', e => { if (e.key === '/' && document.activeElement !== $('q')) { e.preventDefault(); location.hash = 'search'; } });
-$('ctaSearch').addEventListener('click', () => { location.hash = ''; setTimeout(() => { $('searchTitle').scrollIntoView(); $('q').focus(); }, 50); });
 $('btnSetup').addEventListener('click', () => { location.hash = ''; $('setup').hidden = !$('setup').hidden; $('apiUrl').value = apiUrl(); if (!$('setup').hidden) $('setup').scrollIntoView({ block: 'center' }); });
 $('saveApi').addEventListener('click', () => {
   const u = $('apiUrl').value.trim();
